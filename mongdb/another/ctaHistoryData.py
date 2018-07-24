@@ -16,27 +16,29 @@ import pymongo
 
 from vnpy.trader.vtObject import VtTickData
 
-
 dbName = 'dbName_test'
 symbol = 'symbol_test'
-fileName = '/Users/haining/Desktop/myproject/mongodb/MA901_20180504.csv'
 mongoHost = '127.0.0.1'
 mongoPort = 27017
 
+from vnpy.trader.app.ctaStrategy import ctaBacktesting
 
 
-def loadTbPlusCsv():
+ctaBacktesting().roundToPriceTick(1,2);
+
+def loadTbPlusCsv(fileName):
     """将TB极速版导出的csv格式的历史分钟数据插入到Mongo数据库中"""
     """将TB极速版导出的csv格式的历史分钟/Tick数据插入到Mongo数据库中"""
     start = time()
-    print u'开始读取CSV文件%s中的数据插入到%s的%s中' %(fileName, dbName, symbol)
+    print u'开始读取CSV文件%s中的数据插入到%s的%s中' % (fileName, dbName, symbol)
 
-     # 锁定集合，并创建索引
+    # 锁定集合，并创建索引
     client = pymongo.MongoClient(mongoHost, mongoPort)
     collection = client[dbName][symbol]
     collection.ensure_index([('datetime', pymongo.ASCENDING)], unique=True)
 
     # 读取数据和插入到数据库
+    print 'dsafdsafdsa',fileName
     reader = csv.reader(file(fileName, 'r'))
     count = 0
     for d in reader:
@@ -51,8 +53,10 @@ def loadTbPlusCsv():
         bar.date = d[0]
         timeStr = "0.0" if d[20] == "0" else d[20]
         # # 用0在后面补全
-        bar.datetime = datetime.strptime(d[0].replace('\xef\xbb\xbf','') + " " + timeStr.replace(':','') + "0" * (8 - len(timeStr)) + '.000',"%Y%m%d %H%M%S.%f")
-        bar.time = bar.datetime.strftime('%H:%M:%S.%f')#11:20:56.5
+        bar.datetime = datetime.strptime(
+            d[0].replace('\xef\xbb\xbf', '') + " " + timeStr.replace(':', '') + "0" * (8 - len(timeStr)) + '.000',
+            "%Y%m%d %H%M%S.%f")
+        bar.time = bar.datetime.strftime('%H:%M:%S.%f')  # 11:20:56.5
         #
         # # 常规行情
         bar.openPrice = float(d[8])  # 今日开盘价
@@ -70,16 +74,38 @@ def loadTbPlusCsv():
         #     print bar.datetime
         collection.update_one({'datetime': bar.datetime}, {'$set': bar.__dict__}, upsert=True)
 
-
         count += 1
-        if count%10000==0:
+        if count % 10000 == 0:
             print bar.date, bar.time
 
-    print u'插入完毕，耗时：%s' % (time()-start)
+    print u'插入完毕，耗时：%s' % (time() - start)
     print u'数据总量:%s' % (count)
 
 
 loadTbPlusCsv();
 
-
+# import os
+#
+#
+# def file_name(file_dir):
+#     for root, dirs, files in os.walk(file_dir):
+#         for file in files:
+#             if os.path.splitext(file)[1] == '.csv':
+#                 realpath =root + os.path.basename(file)
+#                 print realpath
+#                 print loadTbPlusCsv(realpath)
+# # file_name('/Users/haining/Desktop/myproject/mongodb/');
+#
+#
+#
+# list1 = [0,22,32,22,34,22]
+# list2 = [1,2,5,2,33,2]
+# kkk = 0
+# count = 0
+# for d in list1:
+#     # print list1[count] >= list2[count]
+#     if list1[count] < list2[count]:
+#         kkk = kkk + 1
+#     print kkk < 0
+#     count = count + 1
 
