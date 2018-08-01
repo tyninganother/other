@@ -125,40 +125,22 @@
 # #     print kkk < 0
 # #     count = count + 1
 
-class FFFF:
-    vadss = 0
-    vadss1 = 0
-    vadss2 = 0
-    vadss3 = 0
-    vadss4 = 0
-
-    # def __init__(self):
-    #     vadss = 2
-    #     print 'fdsafds' ,vadss,'fdsafdsdsafda'
-    # def __init__(self):
-    #     vadss = 1
-    #     print 'fdsafds' ,vadss
-    def __init__(self,ffff):
-        vadss = 1
-        print 'fdsafds' ,vadss,ffff
-    def __init__(self,ffdsff):
-        vadss = 1
-        print 'fdsafds' ,vadss
-
-    def dsadas1(self,dsa):
-        print 'dsadas' ,self.vadss
-        return self.vadss
-    def dsadas2(self,dsa):
-        print 'dsadas' ,self.vadss
-        return self.vadss
-    def dsadas3(self,dsa):
-        print 'dsadas' ,self.vadss
-        return self.vadss
-
-print FFFF('dsasdsa');
-FFFF('dsasdsa').dsadas1('fdsafda');
-FFFF('dsasdsa').dsadas1('fdsafda');
-FFFF('dsasdsa').dsadas1('fdsafda');
-FFFF('dsasdsa').dsadas1('fdsafda');
-FFFF('dsasdsa').dsadas1('fdsafda');
-# vvvv.dsadas();
+# encoding:utf-8
+import os
+import csv
+def loadTbPlusCsv(fileName,dbname,sols):
+    # print '开始读取CSV%s文%s件%s中' % (fileName,dbname,sols)
+    print u'开始读取CSV文件%s中的数据插入到%s的%s中' % (fileName, dbName, symbol)
+    f = open(fileName,'r')
+    reader = csv.reader(f)
+    # for d in islice(reader, 1, None):
+    for d in reader:
+        print d
+def file_name(file_dir,dbname,sols):
+    for root, dirs, files in os.walk(file_dir):
+        for file in files:
+            if os.path.splitext(file)[1] == '.csv':
+                realpath = root + os.path.basename(file)
+                print realpath
+                print loadTbPlusCsv(realpath,dbname,sols)
+file_name('/Users/haining/测试/','dbname','sols');
